@@ -1,6 +1,6 @@
 # Playing with Particles
 
-This is my playground for simulating our solar system with **realistic** distances, sizes and speeds - scaled down 25'000'000 times. Written in Rust.
+This is my playground for simulating our solar system with **realistic** distances, sizes and speeds - scaled down 50'000'000 times. Written in Rust.
 
 Controls:
 
