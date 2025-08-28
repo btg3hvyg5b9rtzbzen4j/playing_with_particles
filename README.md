@@ -8,7 +8,7 @@ Controls:
 - `Space`: Move up.
 - `Left Control` Move down.
 - `Left Shift` Reduce movement speed to C.
-- `Left Alt` Lock/unlock mouse for UI interaction.
+- `Escape` Lock/unlock mouse for UI interaction.
 
 Dependencies:
 
