@@ -19,102 +19,56 @@ fn conf() -> Conf {
     }
 }
 
+fn random_chaotic_bodies(c: u32) -> Vec<Body> {
+    let mut bodies = Vec::new();
+
+    for _ in 0..c {
+        let mass = rand::gen_range(1.0e30, 2.0e30); // Solar-mass stars
+        let radius = rand::gen_range(6.0e8, 7.0e8); // Sun-like radius
+        let pos = vec3(
+            rand::gen_range(-2.0e11, 2.0e11),
+            rand::gen_range(-2.0e11, 2.0e11),
+            rand::gen_range(-1.0e10, 1.0e10),
+        );
+        let vel = vec3(
+            rand::gen_range(-3.0e4, 3.0e4), // ~tens of km/s
+            rand::gen_range(-3.0e4, 3.0e4),
+            rand::gen_range(-3.0e4, 3.0e4),
+        );
+        let color = Color::from_rgba(
+            rand::gen_range(50, 255),
+            rand::gen_range(50, 255),
+            rand::gen_range(50, 255),
+            255,
+        );
+
+        bodies.push(Body {
+            position: pos,
+            velocity: vel,
+            mass,
+            radius,
+            color,
+        });
+    }
+
+    bodies
+}
+
 #[macroquad::main(conf)]
 async fn main() {
-    let mut pos = vec3(-130., 0., -50.);
+    let mut pos = vec3(-20000., 0., -50.);
     let mut yaw: f32 = 1.5;
     let mut pitch: f32 = 0.0;
-    let mut movement_speed: f32 = 1000.;
+    let mut movement_speed: f32 = 5000.;
     let mut go_slow = false;
-    let mut time_scale: f32 = 1.;
-    let mut body_scale: f32 = 1.;
+    let mut time_scale: f32 = 2000000.;
+    let mut body_scale: f32 = 15.;
     let mut grabbed = false;
 
     set_cursor_grab(grabbed);
     show_mouse(!grabbed);
 
-    let mut bodies: Vec<Body> = vec![
-        // Sun
-        Body {
-            color: Color::from_rgba(0xFF, 0xD7, 0x00, 255), // gold
-            position: vec3(0., 0., 0.),
-            mass: 1.989e30,
-            radius: 696_340_000.0,
-            velocity: vec3(0., 0., 0.),
-        },
-        // Mercury
-        Body {
-            color: Color::from_rgba(0x91, 0x91, 0x91, 255), // gray
-            position: vec3(57_910_000_000.0, 0., 0.),
-            mass: 3.301e23,
-            radius: 2_439_700.0,
-            velocity: vec3(0., 0., 47_360.0),
-        },
-        // Venus
-        Body {
-            color: Color::from_rgba(0xFF, 0xA5, 0x00, 255), // orange
-            position: vec3(108_200_000_000.0, 0., 0.),
-            mass: 4.867e24,
-            radius: 6_052_000.0,
-            velocity: vec3(0., 0., 35_020.0),
-        },
-        // Earth
-        Body {
-            color: Color::from_rgba(0x00, 0x00, 0xFF, 255), // blue
-            position: vec3(149_597_870_000.0, 0., 0.),
-            mass: 5.972e24,
-            radius: 6_371_000.0,
-            velocity: vec3(0., 0., 29_780.0),
-        },
-        // Mars
-        Body {
-            color: Color::from_rgba(0xFF, 0x00, 0x00, 255), // red
-            position: vec3(227_940_000_000.0, 0., 0.),
-            mass: 6.417e23,
-            radius: 3_390_000.0,
-            velocity: vec3(0., 0., 24_070.0),
-        },
-        // Jupiter
-        Body {
-            color: Color::from_rgba(0xFF, 0xA5, 0x00, 255), // orange
-            position: vec3(778_330_000_000.0, 0., 0.),
-            mass: 1.898e27,
-            radius: 69_911_000.0,
-            velocity: vec3(0., 0., 13_070.0),
-        },
-        // Saturn
-        Body {
-            color: Color::from_rgba(0xFF, 0xFF, 0x99, 255), // pale yellow
-            position: vec3(1_429_400_000_000.0, 0., 0.),
-            mass: 5.683e26,
-            radius: 58_232_000.0,
-            velocity: vec3(0., 0., 9_680.0),
-        },
-        // Uranus
-        Body {
-            color: Color::from_rgba(0x00, 0xFF, 0xFF, 255), // cyan
-            position: vec3(2_870_990_000_000.0, 0., 0.),
-            mass: 8.681e25,
-            radius: 25_362_000.0,
-            velocity: vec3(0., 0., 6_800.0),
-        },
-        // Neptune
-        Body {
-            color: Color::from_rgba(0x00, 0x00, 0xFF, 255), // blue
-            position: vec3(4_504_000_000_000.0, 0., 0.),
-            mass: 1.024e26,
-            radius: 24_622_000.0,
-            velocity: vec3(0., 0., 5_430.0),
-        },
-        // Pluto
-        Body {
-            color: Color::from_rgba(0xFF, 0xFF, 0xFF, 255), // white
-            position: vec3(5_906_400_000_000.0, 0., 0.),
-            mass: 1.309e22,
-            radius: 1_188_300.0,
-            velocity: vec3(0., 0., 4_740.0),
-        },
-    ];
+    let mut bodies = random_chaotic_bodies(3);
 
     loop {
         let dt = get_frame_time();
@@ -185,6 +139,11 @@ async fn main() {
             show_mouse(!grabbed);
         }
 
+        // regenerate
+        if is_key_pressed(KeyCode::R) {
+            bodies = random_chaotic_bodies(3);
+        }
+
         // Scene begin
         set_camera(&Camera3D {
             position: pos,
@@ -220,11 +179,7 @@ async fn main() {
 
             draw_sphere_wires(
                 body.position / SCALE,
-                if i == 0 {
-                    body.radius / SCALE
-                } else {
-                    body.radius / SCALE * body_scale
-                },
+                body.radius / SCALE * body_scale,
                 None,
                 body.color,
             );
@@ -243,7 +198,7 @@ async fn main() {
         draw_text(
             format!("Yaw & Pitch: [{:.2}, {:.2}]", yaw, pitch).as_str(),
             20.0,
-            70.0,
+            60.0,
             20.0,
             WHITE,
         );
@@ -255,14 +210,22 @@ async fn main() {
             )
             .as_str(),
             20.0,
-            100.0,
+            80.0,
             20.0,
             WHITE,
         );
+
         draw_text(
             "Press [ESCAPE] to lock/unlock mouse!",
             20.0,
             screen_height() - 20.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "Press [R] to generate new bodies!",
+            20.0,
+            screen_height() - 40.0,
             20.0,
             WHITE,
         );
