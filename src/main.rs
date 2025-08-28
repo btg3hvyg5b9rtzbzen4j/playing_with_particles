@@ -4,7 +4,6 @@ const G: f32 = 6.67430e-11;
 const C: f32 = 299_792_458.0;
 const CAMERA_SENSITIVITY: f32 = 100.0;
 const SCALE: f32 = 50_000_000.;
-const MOVEMENT_SPEED: f32 = C * 20. / SCALE;
 
 fn conf() -> Conf {
     Conf {
@@ -43,6 +42,8 @@ async fn main() {
         velocity: vec3(0., 0., 0.),
     };
 
+    let mut movement_speed: f32 = C * 20. / SCALE;
+
     loop {
         let dt = get_frame_time();
 
@@ -67,24 +68,31 @@ async fn main() {
 
         // WASD movement
         if is_key_down(KeyCode::W) {
-            pos += forward * MOVEMENT_SPEED * dt;
+            pos += forward * movement_speed * dt;
         }
         if is_key_down(KeyCode::A) {
-            pos -= right * MOVEMENT_SPEED * dt;
+            pos -= right * movement_speed * dt;
         }
         if is_key_down(KeyCode::S) {
-            pos -= forward * MOVEMENT_SPEED * dt;
+            pos -= forward * movement_speed * dt;
         }
         if is_key_down(KeyCode::D) {
-            pos += right * MOVEMENT_SPEED * dt;
+            pos += right * movement_speed * dt;
         }
 
         // SPACE & SHIFT up/down
         if is_key_down(KeyCode::Space) {
-            pos.y += MOVEMENT_SPEED * dt;
+            pos.y += movement_speed * dt;
         }
         if is_key_down(KeyCode::LeftControl) {
-            pos.y -= MOVEMENT_SPEED * dt;
+            pos.y -= movement_speed * dt;
+        }
+
+        // SLOW movement
+        if is_key_down(KeyCode::LeftShift) {
+            movement_speed = C / SCALE;
+        } else {
+            movement_speed = C * 20. / SCALE;
         }
 
         // ESC quitting
