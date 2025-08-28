@@ -20,6 +20,16 @@ fn conf() -> Conf {
     }
 }
 
+// im funny (what the f8**)
+fn radiants_to_deg(x: f32) -> f32 {
+    return x * 180.0 / std::f32::consts::PI;
+}
+
+// im funny 2 (what the f9**)
+fn deg_to_radiants(x: f32) -> f32 {
+    return x * std::f32::consts::PI / 180.0;
+}
+
 #[macroquad::main(conf)]
 async fn main() {
     let mut pos = vec3(-130., 0., -50.);
@@ -119,7 +129,7 @@ async fn main() {
         }
 
         // ESC quitting
-        if is_key_down(KeyCode::Escape) {
+        if is_key_down(KeyCode::Delete) {
             break;
         }
 
@@ -137,6 +147,7 @@ async fn main() {
             target: pos + look,
             ..Default::default()
         });
+
 
         let n = bodies.len();
 
@@ -174,7 +185,7 @@ async fn main() {
             WHITE,
         );
         draw_text(
-            format!("Yaw & Pitch: [{:.2}, {:.2}]", yaw, pitch).as_str(),
+            format!("Yaw & Pitch: [{:.2}, {:.2}]", radiants_to_deg(yaw), radiants_to_deg(pitch)).as_str(),
             20.0,
             70.0,
             20.0,
@@ -238,3 +249,5 @@ impl Body {
         );
     }
 }
+
+
