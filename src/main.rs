@@ -10,6 +10,7 @@ const G: f32 = 6.67430e-11;
 const C: f32 = 299_792_458.0;
 const CAMERA_SENSITIVITY: f32 = 100.0;
 const SCALE: f32 = 50_000_000.;
+const MAX_TIME: f32 = 31_536_000.;
 
 fn conf() -> Conf {
     Conf {
@@ -192,13 +193,20 @@ async fn main() {
             20.0,
             WHITE,
         );
+        draw_text(
+            "Press [LEFT ALT] to lock/unlock mouse!",
+            20.0,
+            screen_height() - 20.0,
+            20.0,
+            WHITE,
+        );
 
         root_ui().window(
             hash!(),
             vec2(screen_width() - 20. - 400., 20.),
             vec2(400., 75.),
             |ui| {
-                ui.slider(hash!(), "Time Scale", 1.0..831_536_000., &mut time_scale);
+                ui.slider(hash!(), "Time Scale", 1.0..MAX_TIME, &mut time_scale);
                 ui.slider(hash!(), "Body Scale", 1.0..100., &mut body_scale);
                 ui.slider(
                     hash!(),
