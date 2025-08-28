@@ -1,15 +1,13 @@
 use macroquad::{
     prelude::*,
-    ui::{
-        self, hash, root_ui,
-        widgets::{self, Slider},
-    },
+    ui::{hash, root_ui},
 };
 
 const G: f32 = 6.67430e-11;
 const C: f32 = 299_792_458.0;
 const CAMERA_SENSITIVITY: f32 = 100.0;
 const SCALE: f32 = 50_000_000.;
+const MAX_PITCH: f32 = std::f32::consts::FRAC_PI_2 - 0.01;
 const MAX_TIME: f32 = 31_536_000.;
 
 fn conf() -> Conf {
@@ -69,7 +67,8 @@ async fn main() {
 
         if grabbed {
             yaw += mouse_delta.x * CAMERA_SENSITIVITY * dt;
-            pitch += mouse_delta.y * CAMERA_SENSITIVITY * 0.6 * dt;
+            pitch += mouse_delta.y * 0.7 * CAMERA_SENSITIVITY * dt;
+            pitch = pitch.clamp(-MAX_PITCH, MAX_PITCH);
         }
 
         // Convert yaw & pitch to a direction vector
